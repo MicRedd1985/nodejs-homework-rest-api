@@ -1,50 +1,32 @@
 const express = require('express');
-const { requestValidation } = require('../middlewares/validation');
+
+
 const {
-  listContacts,
+  getContactsList,
   getContactById,
-  addContact,
-  removeContact,
-  updateContact
-} = require('../../models/contacts')
+  createContact,
+  deleteContactById,
+  updateContactById,
+} = require("../../controllers/contacts");
 
-const router = express.Router()
+const {
+  checkContactId,
+  checkClientData,
+  requestValidation,
+} = require("../../middlewares/validation");
 
-router.get('/', async (req, res, next) => {
-  const contacts = await listContacts(req.params.contactId);
-  res.json({ contacts })
-})
+const router = express.Router();
 
-router.get('/:contactId', async (req, res, next) => {
-  const contact = await getContactById(req.params.contactId)
-  if (contact === undefined) {
-    return res.status(404).json({ message: 'Not found' })
-  }
-  res.status(200).json({ contact })
-})
+router
+  .route("/")
+  .get(getContactsList)
+  .post(checkClientData, requestValidation, createContact);
 
-router.post('/', requestValidation, async (req, res, next) => {
-  const contact = await addContact(req.body);
-  res.status(201).json({ contact })
-})
+router.use("/:id", checkContactId);
+router
+  .route("/:id")
+  .get(getContactById)
+  .put(checkClientData, requestValidation, updateContactById)
+  .delete(deleteContactById);
 
-router.delete('/:contactId', async (req, res, next) => {
-  if ((await getContactById(req.params.contactId)) === undefined) {
-    return res.status(404).json({ message: 'Not found' })
-  }
-  await removeContact(req.params.contactId)
-  res.status(200).json({ message: 'Contact deleted' })
-})
-
-router.put('/:contactId', requestValidation, async (req, res, next) => {
-
-  if ((await getContactById(req.params.contactId)) === undefined) {
-    return res.status(404).json({ message: 'Not found' })
-  }
-
-  await updateContact(req.params.contactId, req.body);
-  const contact = await getContactById(req.params.contactId)
-  res.status(200).json({ contact })
-})
-
-module.exports = router
+module.exports = router;
