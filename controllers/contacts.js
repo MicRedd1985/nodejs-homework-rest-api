@@ -1,74 +1,57 @@
-const shortid = require('shortid')
+const Contact = require("../models/contactModel");
+const { updateStatusContact } = require("../models/contacts");
+const catchAsync = require("../utils/catchAsync");
 
-const {
-  listContacts,
-  getById,
-  removeContact,
-  addContact,
-  updateContact,
-} = require("../models/contacts");
+getContactsList = catchAsync(async (req, res) => {
+  const contacts = await Contact.find();
 
-getContactsList = async (req, res, next) => {
-  try {
-    const contacts = await listContacts();
-    res.status(200).json(contacts);
-  } catch (error) {
-    next(error);
-  }
-};
+  res.status(200).json(contacts);
+});
 
-createContact = async (req, res, next) => {
-  try {
-    const { name, email, phone } = req.body;
+createContact = catchAsync(async (req, res) => {
+  const { name, email, phone, favorite } = req.body;
+  const newContact = await Contact.create({
+    name,
+    email,
+    phone,
+    favorite,
+  });
 
+  res.status(201).json({ contact: newContact });
+});
 
-    const newClient = {
-      id: shortid.generate(),
-      name,
-      email,
-      phone,
-    };
+getContactById = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const contact = await Contact.findById(id);
 
-    await addContact(newClient);
+  res.status(200).json(contact);
+});
 
-    res.status(201).json(newClient);
-  } catch (error) {
-    res.status(400).json({ message: "missing required name field" });
-  }
-};
+updateContactById = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const { name, email, phone, favorite } = req.body;
+  const updatedContact = await Contact.findByIdAndUpdate(
+    id,
+    { name, email, phone, favorite },
+    { new: true }
+  );
 
-getContactById = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const contact = await getById(id);
+  res.status(200).json(updatedContact);
+});
 
-    res.status(200).json(contact);
-  } catch (error) {
-    next(error);
-  }
-};
+deleteContactById = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  await Contact.findByIdAndRemove(id);
 
-updateContactById = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    await updateContact(id, req.body);
+  res.status(200).json({ message: "contact deleted" });
+});
 
-    res.status(200).json(req.body);
-  } catch (error) {
-    next(error);
-  }
-};
+updateStatusContactById = catchAsync(async (req, res, next) => {
+  const { contactId } = req.params;
+  const updateContact = await updateStatusContact(contactId, req.body);
 
-deleteContactById = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    await removeContact(id);
-
-    res.status(200).json({ message: "contact deleted" });
-  } catch (error) {
-    next(error);
-  }
-};
+  res.status(200).json(updateContact);
+});
 
 module.exports = {
   getContactsList,
@@ -76,4 +59,5 @@ module.exports = {
   getContactById,
   updateContactById,
   deleteContactById,
+  updateStatusContactById,
 };
