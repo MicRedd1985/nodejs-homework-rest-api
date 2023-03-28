@@ -1,5 +1,4 @@
 const Contact = require("../models/contactModel");
-const { updateStatusContact } = require("../models/contacts");
 const catchAsync = require("../utils/catchAsync");
 
 getContactsList = catchAsync(async (req, res) => {
@@ -30,20 +29,13 @@ getContactById = catchAsync(async (req, res, next) => {
 updateContactById = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const { name, email, phone, favorite } = req.body;
-  const updatedContact = await Contact.findByIdAndUpdate(
+  const updateContact = await Contact.findByIdAndUpdate(
     id,
     { name, email, phone, favorite },
     { new: true }
   );
 
-  res.status(200).json(updatedContact);
-});
-
-deleteContactById = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  await Contact.findByIdAndRemove(id);
-
-  res.status(200).json({ message: "contact deleted" });
+  res.status(200).json(updateContact);
 });
 
 updateStatusContactById = catchAsync(async (req, res, next) => {
@@ -51,6 +43,20 @@ updateStatusContactById = catchAsync(async (req, res, next) => {
   const updateContact = await updateStatusContact(contactId, req.body);
 
   res.status(200).json(updateContact);
+});
+
+const updateStatusContact = async (contactId, body) => {
+  const updateContact = await Contact.findByIdAndUpdate(contactId, body, { new: true });
+
+  return updateContact;
+}
+
+
+deleteContactById = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  await Contact.findByIdAndRemove(id);
+
+  res.status(200).json({ message: "contact deleted" });
 });
 
 module.exports = {

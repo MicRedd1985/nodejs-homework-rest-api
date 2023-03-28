@@ -1,5 +1,4 @@
 const fs = require('fs').promises
-const Contact = require("../models/contactModel");
 
 const listContacts = async () => {
   return JSON.parse(await fs.readFile("./models/contacts.json"));
@@ -37,17 +36,10 @@ const updateContact = async (id, body) => {
   await fs.writeFile("./models/contacts.json", JSON.stringify(contacts));
 };
 
-const updateStatusContact = async (contactId, body) => {
-  const updateContact = await Contact.findByIdAndUpdate(contactId, body, { new: true });
-
-  return updateContact;
-}
-
 module.exports = {
   listContacts,
   getById,
   removeContact,
   addContact,
   updateContact,
-  updateStatusContact,
-};
+  };

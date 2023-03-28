@@ -1,6 +1,6 @@
 const Joi = require("joi");
 const { isValidObjectId } = require("mongoose");
-const { AppError, catchAsync } = require("../utils");
+const { AppError, catchAsync } = require("../utils/index");
 
 checkContactId = async (req, res, next) => {
     const { id } = req.params;
@@ -34,7 +34,7 @@ checkContactId = async (req, res, next) => {
     next();
   });
 
-requestValidation = async (req, res, next) => {
+requestValidation = catchAsync(async (req, res, next) => {
     const schema = Joi.object({
         name: Joi.string().alphanum().trim().min(3).max(30).required(),
         email: Joi.string().trim().min(3).max(30).required(),
@@ -46,7 +46,7 @@ requestValidation = async (req, res, next) => {
     return next(AppError(400, resultValidation.error.message));
 
   next();
-};
+});
 
 
 module.exports = {
