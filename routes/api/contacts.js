@@ -28,10 +28,10 @@ router.use("/:id", checkContactId);
 router
   .route("/:id")
   .get(getContactById)
-  .put( checkClientData, validateClientData, updateContactById)
+  .put(checkClientData, validateClientData, updateContactById)
   .delete(deleteContactById);
 
-  router
+router
   .route("/:contactId/favorite")
   .patch(checkStatusData, updateStatusContactById);
 
