@@ -28,7 +28,7 @@ router.use("/:id", checkContactId);
 router
   .route("/:id")
   .get(getContactById)
-  .put(checkClientData, validateClientData, updateContactById)
+  .put(checkClientData, requestValidation, updateContactById)
   .delete(deleteContactById);
 
 router
