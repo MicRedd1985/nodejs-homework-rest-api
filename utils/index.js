@@ -1,7 +1,4 @@
-const AppError = require("./AppError");
-const catchAsync = require("./catchAsync");
+const { AppError } = require("./AppError");
+const { ctrlWrapper } = require("./ctrlWrapper");
 
-module.exports = {
-  AppError,
-  catchAsync,
-};
+module.exports = { AppError, ctrlWrapper };
