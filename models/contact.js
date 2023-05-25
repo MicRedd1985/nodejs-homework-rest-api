@@ -1,7 +1,7 @@
 const { Schema, model } = require("mongoose");
 const Joi = require("joi");
 
-const contactSchema = new Schema(
+const contactSchema = Schema(
   {
     name: {
       type: String,
@@ -24,7 +24,6 @@ const contactSchema = new Schema(
 );
 
 const Contact = model("contact", contactSchema);
-
 
 const joiSchema = Joi.object({
   name: Joi.string().required(),

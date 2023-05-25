@@ -1,18 +1,16 @@
-const express = require('express');
-
-
+const express = require("express");
 const {
   getContactsList,
   getContactById,
   createContact,
-  deleteContactById,
   updateContactById,
   updateStatusContact,
+  deleteContactById,
 } = require("../../controllers/contacts");
-
-const { validation } = require("../../middlewares/validation");
+const { validation } = require("../../middlewares");
+const { isValidId } = require("../../middlewares/isValidId");
 const { ctrlWrapper } = require("../../utils");
-const { joiSchema, favoriteSchema } = require("../../models/contactModel");
+const { joiSchema, favoriteSchema } = require("../../models/contact");
 
 const router = express.Router();
 
@@ -23,12 +21,9 @@ router
 
 router
   .route("/:contactId")
-  .get(ctrlWrapper(getContactById))
-  .put(validation(joiSchema), ctrlWrapper(updateContactById))
-  .delete(ctrlWrapper(deleteContactById));
-
-router
-  .route("/:contactId/favorite")
-  .patch(validation(favoriteSchema), ctrlWrapper(updateStatusContact))
+  .get(isValidId, ctrlWrapper(getContactById))
+  .put(isValidId, validation(joiSchema), ctrlWrapper(updateContactById))
+  .patch(isValidId, validation(favoriteSchema), ctrlWrapper(updateStatusContact))
+  .delete(isValidId, ctrlWrapper(deleteContactById));
 
 module.exports = router;

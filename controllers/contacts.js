@@ -1,6 +1,6 @@
-const { joiSchema, favoriteSchema, Contact } = require("../models/contactModel");
-const { notFoundError } = require("../middlewares/notFoundError");
-const { AppError } = require("../utils");
+const { joiSchema, favoriteSchema, Contact } = require("../models/contact");
+const { NotFound } = require("http-errors");
+const { AppError } = require("../utils/AppError");
 
 
 const getContactsList = async (req, res) => {
@@ -8,12 +8,12 @@ const getContactsList = async (req, res) => {
   res.status(200).json(result);
 };
 
-const getContactById = async (req, res) => {
+const getContactById = async (req, res, next) => {
   const { contactId } = req.params;
   const result = await Contact.findById(contactId);
 
   if (!result) {
-    throw new NotFoundError(`Not found!`);;
+    throw new NotFound(`Not found!`);
   }
   res.status(200).json(result);
 };
@@ -26,10 +26,10 @@ const createContact = async (req, res) => {
     throw new AppError(400, "missing required name field");
   }
   const result = await Contact.create(body);
-  res.status(201).json({ result });
+  res.status(201).json(result);
 };
 
-const updateContactById= async (req, res) => {
+const updateContactById = async (req, res) => {
   const { contactId } = req.params;
   const body = req.body;
   const { error } = joiSchema.validate(body);
@@ -43,7 +43,7 @@ const updateContactById= async (req, res) => {
   });
 
   if (!result) {
-    throw new notFoundError(`Not found!`);
+    throw new NotFound(`Not found!`);
   }
   res.status(200).json({ result, message: "contact updated" });
 };
@@ -64,7 +64,7 @@ const updateStatusContact = async (req, res) => {
   );
 
   if (!result) {
-    throw new notFoundError(`Not found!`);
+    throw new NotFound(`Not found!`);
   }
   res.status(200).json({ result });
 };
@@ -74,16 +74,16 @@ const deleteContactById = async (req, res) => {
   const result = await Contact.findByIdAndRemove(contactId);
 
   if (!contactId) {
-    throw new notFoundError(`Not found!`);
+    throw new NotFound(`Not found!`);
   }
   res.status(200).json({ result, message: "contact delete!" });
 };
 
 module.exports = {
   getContactsList,
-  createContact,
   getContactById,
+  createContact,
   updateContactById,
-  deleteContactById,
   updateStatusContact,
+  deleteContactById,
 };
