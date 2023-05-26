@@ -23,7 +23,10 @@ router
   .route("/:contactId")
   .get(isValidId, ctrlWrapper(getContactById))
   .put(isValidId, validation(joiSchema), ctrlWrapper(updateContactById))
-  .patch(isValidId, validation(favoriteSchema), ctrlWrapper(updateStatusContact))
   .delete(isValidId, ctrlWrapper(deleteContactById));
+
+router
+  .route ("/:contactId/favorite")
+  .patch(isValidId, validation(favoriteSchema), ctrlWrapper(updateStatusContact))
 
 module.exports = router;
