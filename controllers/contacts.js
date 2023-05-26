@@ -45,7 +45,7 @@ const updateContactById = async (req, res) => {
   if (!result) {
     throw new NotFound(`Not found!`);
   }
-  res.status(200).json({ result, message: "contact updated" });
+  res.status(200).json({ message: "contact updated" });
 };
 
 const updateStatusContact = async (req, res) => {
@@ -76,7 +76,7 @@ const deleteContactById = async (req, res) => {
   if (!contactId) {
     throw new NotFound(`Not found!`);
   }
-  res.status(200).json({ result, message: "contact delete!" });
+  res.status(200).json({ message: "contact deleted" });
 };
 
 module.exports = {

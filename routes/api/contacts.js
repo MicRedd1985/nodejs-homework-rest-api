@@ -7,7 +7,7 @@ const {
   updateStatusContact,
   deleteContactById,
 } = require("../../controllers/contacts");
-const { validation } = require("../../middlewares");
+const { validation, validationFavorite } = require("../../middlewares/validation");
 const { isValidId } = require("../../middlewares/isValidId");
 const { ctrlWrapper } = require("../../utils");
 const { joiSchema, favoriteSchema } = require("../../models/contact");
@@ -26,7 +26,7 @@ router
   .delete(isValidId, ctrlWrapper(deleteContactById));
 
 router
-  .route ("/:contactId/favorite")
-  .patch(isValidId, validation(favoriteSchema), ctrlWrapper(updateStatusContact))
+  .route("/:contactId/favorite")
+  .patch(isValidId, validationFavorite(favoriteSchema), ctrlWrapper(updateStatusContact))
 
 module.exports = router;
