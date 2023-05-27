@@ -23,7 +23,7 @@ const createContact = async (req, res) => {
   const { error } = joiSchema.validate(body);
 
   if (error) {
-    throw new AppError(400, "missing required name field");
+    throw new NotFound('missing required name field');
   }
   const result = await Contact.create(body);
   res.status(201).json(result);
@@ -35,7 +35,7 @@ const updateContactById = async (req, res) => {
   const { error } = joiSchema.validate(body);
 
   if (error) {
-    throw new AppError(400, "missing fields");
+    throw new NotFound(`missing fields`);
   }
 
   const result = await Contact.findByIdAndUpdate(contactId, body, {
@@ -45,7 +45,7 @@ const updateContactById = async (req, res) => {
   if (!result) {
     throw new NotFound(`Not found!`);
   }
-  res.status(200).json({ message: "contact updated" });
+  res.status(200).json({ result, message: "contact updated" });
 };
 
 const updateStatusContact = async (req, res) => {
@@ -73,7 +73,7 @@ const deleteContactById = async (req, res) => {
   const { contactId } = req.params;
   const result = await Contact.findByIdAndRemove(contactId);
 
-  if (!contactId) {
+  if (!result) {
     throw new NotFound(`Not found!`);
   }
   res.status(200).json({ message: "contact deleted" });
