@@ -20,13 +20,8 @@ const getContactById = async (req, res, next) => {
 
 const createContact = async (req, res) => {
   const body = req.body;
-  const { error } = joiSchema.validate(body);
-
-  if (error) {
-    throw new AppError(400, 'missing required name field');
-  }
   const result = await Contact.create(body);
-  res.status(201).json(result);
+  res.status(201).json({ result });
 };
 
 const updateContactById = async (req, res) => {
