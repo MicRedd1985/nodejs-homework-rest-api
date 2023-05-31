@@ -21,7 +21,7 @@ const getContactById = async (req, res, next) => {
 const createContact = async (req, res) => {
   const body = req.body;
   const result = await Contact.create(body);
-  res.status(201).json({ result });
+  res.status(201).json( result );
 };
 
 const updateContactById = async (req, res) => {
@@ -40,7 +40,7 @@ const updateContactById = async (req, res) => {
   if (!result) {
     throw new NotFound(`Not found!`);
   }
-  res.status(200).json({ result, message: "contact updated" });
+  res.status(200).json({ message: "contact updated" });
 };
 
 const updateStatusContact = async (req, res) => {
