@@ -40,7 +40,7 @@ const updateContactById = async (req, res) => {
   if (!result) {
     throw new NotFound(`Not found!`);
   }
-  res.status(200).json({ message: "contact updated" });
+  res.status(200).json( result );
 };
 
 const updateStatusContact = async (req, res) => {
