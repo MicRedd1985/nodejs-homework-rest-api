@@ -1,60 +1,39 @@
-const Joi = require("joi");
-const { getById } = require("../models/contacts");
+const validation = (schema) => {
+  return (req, res, next) => {
+    const { error } = schema.validate(req.body);
 
-checkContactId = async (req, res, next) => {
-    try {
-        const { id } = req.params;
-        const contact = await getById(id);
+    if (Object.keys(req.body).length === 0)
+      return res.status(400).json({ message: "missing fields" });
 
-        if (contact) return next();
+    const { name, email, phone } = req.body;
+    let fieldName = "name";
 
-        const error = new Error("Not found");
-        error.status = 404;
+    if (!email) fieldName = "email";
+    else if (!phone) fieldName = "phone";
 
+    if (!name || !email || !phone)
+      if (error) {
+        error.status = 400;
+        error.message = `missing required ${fieldName} field`;
         next(error);
-    } catch (error) {
-        next(error);
-    }
+        return;
+      }
+    next();
+  };
 };
 
-checkClientData = async (req, res, next) => {
-    try {
-        if (Object.keys(req.body).length === 0)
-            return res.status(400).json({ message: "missing fields" });
+const validationFavorite = (schema) => {
+  return (req, res, next) => {
+    const { error } = schema.validate(req.body);
 
-        const { name, email, phone } = req.body;
-        let fieldName = "name";
-
-        if (!email) fieldName = "email";
-        else if (!phone) fieldName = "phone";
-
-        if (!name || !email || !phone)
-            return res
-                .status(400)
-                .json({ message: `missing required ${fieldName} field` });
-
-        next();
-    } catch (error) {
-        next(error);
+    if (error) {
+      error.status = 400;
+      error.message = "missing field favorite";
+      next(error);
     }
+    next();
+  };
 };
 
-requestValidation = async (req, res, next) => {
-    const schema = Joi.object({
-        name: Joi.string().alphanum().trim().min(3).max(30).required(),
-        email: Joi.string().trim().min(3).max(30).required(),
-        phone: Joi.string().trim().min(3).max(30).required(),
-    });
-    const resultValidation = schema.validate(req.body);
-    if (resultValidation.error) {
-        return res.status(400).json({ status: resultValidation.error.details[0].message })
-    }
-    next()
-}
+module.exports = { validation, validationFavorite };
 
-
-module.exports = {
-    checkContactId,
-    checkClientData,
-    requestValidation,
-};
