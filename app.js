@@ -15,7 +15,7 @@ const formatsLogger = app.get("env") === "development" ? "dev" : "short";
 app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
-app.use ("/api/users", userRouter);
+app.use ("/users", userRouter);
 app.use("/api/contacts", contactsRouter);
 app.use(notFound);
 app.use(globalError);

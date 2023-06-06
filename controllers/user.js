@@ -15,7 +15,7 @@ const register = async (req, res) => {
     email,
     password: hashPassword,
   });
-  res.status(201).json(result );
+  res.status(201).json({ user: {email, subscription: result.subscription}});
 };
 
 const login = async (req, res) => {
@@ -29,20 +29,12 @@ const login = async (req, res) => {
   };
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "24h" });
   await User.findByIdAndUpdate(user._id, { token });
-  res.status(200).json({ token });
+  res.status(200).json({ token, user: {email: user.email, subscription: user.subscription} });
 };
 
 const getCurrent = async (req, res) => {
-  const { email } = req.user;
-  res.json({
-    status: "success",
-    code: 200,
-    data: {
-      user: {
-        email,
-      },
-    },
-  });
+  const { email,subscription } = req.user;
+  res.status(200).json({ user: { email, subscription } });
 };
 
 const logout = async (req, res) => {
