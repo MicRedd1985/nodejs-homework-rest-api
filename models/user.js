@@ -2,6 +2,7 @@ const { Schema, model } = require("mongoose");
 const Joi = require("joi");
 const bcrypt = require("bcryptjs");
 
+
 const userSchema = Schema(
   {
     email: {
@@ -13,6 +14,10 @@ const userSchema = Schema(
       type: String,
       required: [true, "Set password for user"],
       minlength: 6,
+    },
+    avatarURL: {
+      type: String,
+      required: true,
     },
     subscription: {
       type: String,
