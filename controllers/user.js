@@ -1,8 +1,15 @@
 const { Conflict, Unauthorized, AppError, NotFound } = require("http-errors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const gravatar = require("gravatar");
+const Jimp = require("jimp");
+const path = require("path");
+const fs = require("fs/promises");
 const { User, joiSubscriptionSchema } = require("../models");
 const { SECRET_KEY } = process.env;
+
+const avatarsDir = path.join(__dirname, "../", "public", "avatars");
+
 
 const register = async (req, res) => {
   const { email, password } = req.body;
@@ -10,10 +17,12 @@ const register = async (req, res) => {
   if (user) {
     throw new Conflict(`${email} already in use`);
   }
+  const avatarURL = gravatar.url(email);
   const hashPassword = await bcrypt.hash(password, bcrypt.genSaltSync(10));
   const result = await User.create({
     email,
     password: hashPassword,
+    avatarURL,
   });
   res.status(201).json({ user: {email, subscription: result.subscription}});
 };
@@ -60,10 +69,40 @@ const updateStatusUser = async (req, res) => {
   res.status(200).json({ result });
 };
 
+const updateAvatar = async (req, res) => {
+  try {
+    const { path: temporaryName, filename } = req.file;
+    const { id } = req.user;
+    const [extention] = filename.split(".").reverse();
+    const avatarName = `${id}.${extention}`;
+
+    const resultUpload = path.join(avatarsDir, avatarName);
+
+    await Jimp.read(temporaryName)
+      .then((img) => {
+        return img.resize(250, 250).writeAsync(temporaryName);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    await fs.rename(temporaryName, resultUpload);
+    const avatarURL = path.join("avatars", avatarName);
+
+    await User.findByIdAndUpdate(id, { avatarURL });
+
+    res.status(200).json({ avatarURL });
+  } catch (error) {
+    await fs.unlink(req.file.path);
+    throw error;
+  }
+};
+
 module.exports = {
   register,
   login,
   getCurrent,
   logout,
   updateStatusUser,
+  updateAvatar
 };
