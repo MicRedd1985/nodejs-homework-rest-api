@@ -36,7 +36,7 @@ const register = async (req, res) => {
     html:
       "<h3>Please complete registration: confirm you email </h3>" +
       `<h4>
-          <a href='http://localhost:3000/api/users/verify/${verificationToken}'>
+          <a href='http://localhost:3000/users/verify/${verificationToken}'>
             by click on this link
           </a>
         </h4>`,
@@ -155,7 +155,7 @@ const verifyUserControler = async (req, res) => {
     html:
       "<h3>Please complete registration: confirm you email </h3>" +
       `<h4>
-          <a href='http://localhost:3000/api/users/verify/${user.verificationToken}'>
+          <a href='http://localhost:3000/users/verify/${user.verificationToken}'>
             by click on this link
           </a>
         </h4>`,
